@@ -4,7 +4,7 @@ import org.sample.springcloud.entities.Payment;
 
 public interface PaymentService {
 
-    public int save(Payment payment);
+    int save(Payment payment);
 
-    public Payment getPaymentById(Long id);
+    Payment getPaymentById(Long id);
 }

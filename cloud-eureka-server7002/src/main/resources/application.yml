@@ -4,8 +4,7 @@ server:
 spring:
   application:
     name: cloud-eureka-service
-    #单机 defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
-  #互相注册
+
 eureka:
   instance:
     hostname: eureka7002

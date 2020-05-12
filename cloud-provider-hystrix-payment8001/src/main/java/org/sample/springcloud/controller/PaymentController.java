@@ -2,9 +2,12 @@ package org.sample.springcloud.controller;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 import lombok.extern.slf4j.Slf4j;
 import org.sample.springcloud.service.PaymentService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,9 +40,6 @@ public class PaymentController {
     }
 
     @GetMapping("/payment/hystrix/timeout/{id}")
-    @HystrixCommand(fallbackMethod = "paymentInfo_TimeOutHandler",commandProperties = {
-            @HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value="5000")
-    })
     public String paymentInfo_TimeOut(@PathVariable("id") Integer id)
     {
         //Order那边如果等待的时间大于自己规则时间则自己先熔断处理了
@@ -56,4 +56,14 @@ public class PaymentController {
     public String paymentInfo_TimeOutHandler(Integer id) {
         return "线程池：" + Thread.currentThread().getName() + " 8001系统繁忙或运行出错，请稍后再试，id "+ id;
     }
+
+
+    //-------服务熔断
+    @GetMapping(value="/payment/circuit/{id}")
+    public String paymentCircuitBreaker( @PathVariable("id") Integer id) {
+        String result = paymentService.paymentCircuitBreaker(id);
+        log.info("******result:" + result);
+        return result;
+    }
+
 }
